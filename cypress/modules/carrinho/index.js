@@ -1,84 +1,86 @@
-import { dadosUsuario } from "../../data/usuario.js"
+import { carrinhoLocators as loc } from './locators.js';
+import { dadosUsuario } from '../../data/usuario.js';
 
 class Carrinho {
-    incluirTresProdutos() {
-        const produtos = [1, 3, 5];
 
-        produtos.forEach((codProdutoInformado) => {
-            cy.get(`.features_items a[data-product-id="${codProdutoInformado}"]`)
-                .first()
-                .should('be.visible')
-                .click();
+  incluirTresProdutos() {
+    const produtos = [1, 3, 5];
 
-            cy.get('#cartModal')
-                .should('have.class', 'show')
-                .and('be.visible');
+    produtos.forEach(codProdutoInformado => {
+      cy.get(loc.produtos(codProdutoInformado))
+        .first()
+        .should('be.visible')
+        .click();
 
-            cy.get('.modal-backdrop').should('not.exist');
+      cy.get(loc.modalCarrinho)
+        .should('have.class', 'show')
+        .and('be.visible');
 
-            cy.xpath('//div[@id="cartModal" and contains(@class,"show")]//button[contains(@class,"close-modal") and normalize-space()="Continue Shopping"]')
-                .should('exist')
-                .click();
-        });
-    }
+      cy.get('.modal-backdrop').should('not.exist');
 
-    prosseguirParaFinalizarCompra(){
-        cy.contains('Proceed To Checkout').should('be.visible').click()
-    }
+      cy.xpath(loc.botaoContinuarComprandoModal)
+        .should('exist')
+        .click();
+    });
+  }
 
-    validarTresProdutosIncluidosNoCarrinho() {
-        cy.xpath('//div[@class="table-responsive cart_info"]')
-            .find('tr')
-            .then(($rows) => {
-                const qtd = $rows.length - 1;
-                cy.log('Quantidade de produtos no carrinho:', qtd);
-                expect(qtd).to.eq(3);
-            });
-    }
-    validarOsDetalhesDoEndereco() {
-        cy.contains('Address Details').should('be.visible')
-        cy.get('#address_delivery').should('contain.text', 'Your delivery address')
-        cy.get('#address_delivery').should('contain.text', `Mrs. ${dadosUsuario.primNome} ${dadosUsuario.sobrenome}`)
-        cy.get('#address_delivery').should('contain.text', `${dadosUsuario.companhia}`)
-        cy.get('#address_delivery').should('contain.text', `${dadosUsuario.endereco}`)
-        cy.get('#address_delivery').should('contain.text', `${dadosUsuario.cidade}`)
-        cy.get('#address_delivery').should('contain.text', `${dadosUsuario.telefone}`)
+  prosseguirParaFinalizarCompra() {
+    cy.get(loc.botaoProceedToCheckout).should('be.visible').click();
+  }
 
-        cy.get('#address_invoice').should('contain.text', 'Your billing address')
-        cy.get('#address_invoice').should('contain.text', `Mrs. ${dadosUsuario.primNome} ${dadosUsuario.sobrenome}`)
-        cy.get('#address_invoice').should('contain.text', `${dadosUsuario.companhia}`)
-        cy.get('#address_invoice').should('contain.text', `${dadosUsuario.endereco}`)
-        cy.get('#address_invoice').should('contain.text', `${dadosUsuario.cidade}`)
-        cy.get('#address_invoice').should('contain.text', `${dadosUsuario.telefone}`)
+  validarTresProdutosIncluidosNoCarrinho() {
+    cy.xpath(loc.tabelaCarrinho)
+      .find('tr')
+      .then($rows => {
+        const qtd = $rows.length - 1;
+        cy.log('Quantidade de produtos no carrinho:', qtd);
+        expect(qtd).to.eq(3);
+      });
+  }
 
-    }
+  validarOsDetalhesDoEndereco() {
+    cy.contains('Address Details').should('be.visible');
+    cy.get(loc.enderecoEntrega)
+      .should('contain.text', 'Your delivery address')
+      .and('contain.text', `Mrs. ${dadosUsuario.primNome} ${dadosUsuario.sobrenome}`)
+      .and('contain.text', `${dadosUsuario.companhia}`)
+      .and('contain.text', `${dadosUsuario.endereco}`)
+      .and('contain.text', `${dadosUsuario.cidade}`)
+      .and('contain.text', `${dadosUsuario.telefone}`);
 
-    validarOsDetalhesDoPedido() {
-        cy.contains('Review Your Order').should('be.visible')
+    cy.get(loc.enderecoFaturamento)
+      .should('contain.text', 'Your billing address')
+      .and('contain.text', `Mrs. ${dadosUsuario.primNome} ${dadosUsuario.sobrenome}`)
+      .and('contain.text', `${dadosUsuario.companhia}`)
+      .and('contain.text', `${dadosUsuario.endereco}`)
+      .and('contain.text', `${dadosUsuario.cidade}`)
+      .and('contain.text', `${dadosUsuario.telefone}`);
+  }
 
-        let soma = 0
+  validarOsDetalhesDoPedido() {
+    cy.contains(loc.secaoRevisaoPedido).should('be.visible');
 
-        cy.get('#cart_info .cart_total_price:not(:last)').each(($el) => {
-            const texto = $el.text()
-            if (texto.includes('Rs.')) {
-                soma += parseInt(texto.replace(/[^\d]/g, ''))
-            }
-        })
+    let soma = 0;
 
-        cy.get('#cart_info tbody tr').last().find('.cart_total_price').then(($total) => {
-            const totalExibido = parseInt($total.text().replace(/[^\d]/g, ''))
-            expect(soma).to.eq(totalExibido)
-        })
-    }
+    cy.get(loc.precosItensCarrinho).each($el => {
+      const texto = $el.text();
+      if (texto.includes('Rs.')) {
+        soma += parseInt(texto.replace(/[^\d]/g, ''));
+      }
+    });
 
+    cy.get(loc.totalPedido).then($total => {
+      const totalExibido = parseInt($total.text().replace(/[^\d]/g, ''));
+      expect(soma).to.eq(totalExibido);
+    });
+  }
 
-    efetuarPedido() {
-        cy.scrollTo('bottom')
-        cy.xpath('//div[@id="ordermsg"]//textarea[@name="message"]').type('Aguardo o envio do pedido em horário comercial. Obrigada')
-        cy.get('a[href="/payment"]').click()
-
-        cy.contains('Payment').should('be.visible')
-    }
+  efetuarPedido() {
+    cy.scrollTo('bottom');
+    cy.xpath(loc.textareaMensagemPedido).type('Aguardo o envio do pedido em horário comercial. Obrigada');
+    cy.get(loc.linkPagamento).click();
+    cy.contains(loc.secaoPagamento).should('be.visible');
+  }
 }
 
-export default new Carrinho()
+export default new Carrinho();

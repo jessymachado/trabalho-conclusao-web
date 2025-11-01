@@ -1,16 +1,17 @@
-export function preencherFormularioFaleConosco(user, password) {
-    cy.get('[data-qa="name"]').type(user)
-    cy.get('[data-qa="email"]').type(password)
-    cy.get('[data-qa="subject"]').type(`Elogio da promoção`)
-    cy.get('[data-qa="message"]').type(`Estou muito satisfeita com a promoção que foi proposta.`)
+import { contatoLocators as loc } from './locators.js';
 
-    cy.fixture('../fixtures/teste.png').as('imagem')
+export function preencherFormularioFaleConosco(user, email) {
+  cy.get(loc.inputNome).type(user);
+  cy.get(loc.inputEmail).type(email);
+  cy.get(loc.inputAssunto).type('Elogio da promoção');
+  cy.get(loc.textareaMensagem).type('Estou muito satisfeita com a promoção que foi proposta.');
 
-    cy.get('input[name="upload_file"]').selectFile('@imagem')
-    cy.get('input[name="submit"]').click()
+  cy.fixture('../fixtures/teste.png').as('imagem');
+  cy.get(loc.inputArquivo).selectFile('@imagem');
+  cy.get(loc.botaoSubmit).click();
 }
 
 export function validarMensagemFormularioCadastradoComSucesso() {
-    cy.get('.status').should('be.visible')
-    cy.get('.status').should('have.text', 'Success! Your details have been submitted successfully.')
+  cy.get(loc.statusMensagem).should('be.visible');
+  cy.get(loc.statusMensagem).should('have.text', 'Success! Your details have been submitted successfully.');
 }

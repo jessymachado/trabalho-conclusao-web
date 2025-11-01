@@ -1,54 +1,58 @@
-
-import { dadosUsuario } from "../../data/usuario.js"
+import { cadastroLocators as loc } from "./locators.js";
+import { dadosUsuario } from "../../data/usuario.js";
 
 class Cadastro {
-    preencherFormularioDeCadastroCompleto() {
-        cy.get('input[type=radio]').check('Mrs')
-        cy.get('input#password').type('12345', { log: false })
-        cy.get('select[data-qa="days"]').select('22')
-        cy.get('select[data-qa="months"]').select('February')
-        cy.get('[data-qa="years"]').select('1990')
-        cy.get('input[type=checkbox]#newsletter').check()
-        cy.get('input[type=checkbox]#optin').check()
-        cy.get('input#first_name').type(dadosUsuario.primNome)
-        cy.get('input#last_name').type(dadosUsuario.sobrenome)
-        cy.get('input#company').type(dadosUsuario.companhia)
-        cy.get('input#address1').type(dadosUsuario.endereco)
-        cy.get('select#country').select(dadosUsuario.cidade)
-        cy.get('input#state').type(dadosUsuario.estado)
-        cy.get('input#city').type('Los Angeles')
-        cy.get('[data-qa="zipcode"]').type(90001)
-        cy.get('[data-qa="mobile_number"]').type(dadosUsuario.telefone)
-        cy.get('button[data-qa="create-account"]').click()
-    }
 
-    preencherAssinatura(emailAssinatura) {
-        cy.scrollTo('bottom');
-        cy.get('.single-widget').should('contain.text', 'Subscription')
-        cy.get('[id="susbscribe_email"]').type(emailAssinatura)
-        cy.get('button[id="subscribe"]').click()
-    }
+  preencherFormularioDeCadastroCompleto() {
+    cy.get(loc.radioGenero).check('Mrs');
+    cy.get(loc.inputSenha).type('12345', { log: false });
+    cy.get(loc.selectDia).select('22');
+    cy.get(loc.selectMes).select('February');
+    cy.get(loc.selectAno).select('1990');
+    cy.get(loc.checkboxNewsletter).check();
+    cy.get(loc.checkboxOptin).check();
+    cy.get(loc.inputPrimeiroNome).type(dadosUsuario.primNome);
+    cy.get(loc.inputSobrenome).type(dadosUsuario.sobrenome);
+    cy.get(loc.inputCompanhia).type(dadosUsuario.companhia);
+    cy.get(loc.inputEndereco).type(dadosUsuario.endereco);
+    cy.get(loc.selectPais).select(dadosUsuario.cidade);
+    cy.get(loc.inputEstado).type(dadosUsuario.estado);
+    cy.get(loc.inputCidade).type('Los Angeles');
+    cy.get(loc.inputCep).type(90001);
+    cy.get(loc.inputTelefone).type(dadosUsuario.telefone);
+    cy.get(loc.botaoCriarConta).click();
+  }
 
-    validarMensagemAssinaturaComSucesso() {
-        cy.get('.alert-success').should('have.text', 'You have been successfully subscribed!')
-    }
+  preencherAssinatura(emailAssinatura) {
+    cy.scrollTo('bottom');
+    cy.get(loc.secaoAssinatura).should('contain.text', 'Subscription');
+    cy.get(loc.inputEmailAssinatura).type(emailAssinatura);
+    cy.get(loc.botaoAssinar).click();
+  }
 
-    validarMensagemContaCadastradaComSucesso() {
-        cy.url().should('includes', 'account_created')
-        cy.contains('b', 'Account Created!')
-        cy.get('h2[data-qa="account-created"]').should('have.text', 'Account Created!')
-    }
+  validarMensagemAssinaturaComSucesso() {
+    cy.get(loc.mensagemSucessoAssinatura)
+      .should('have.text', 'You have been successfully subscribed!');
+  }
 
-    validarMensagemContaCadastradaComErro() {
-        cy.get('.signup-form > form > p').should('contain', 'Email Address already exist!')
-    }
+  validarMensagemContaCadastradaComSucesso() {
+    cy.url().should('include', 'account_created');
+    cy.contains('b', 'Account Created!');
+    cy.get(loc.mensagemContaCriada)
+      .should('have.text', 'Account Created!');
+  }
 
-    validarMensagemContaExcluidaComSucesso() {
-        cy.get('.container').should('contain.text', 'Account Deleted!')
-        cy.get('.container').should('contain.text', 'Your account has been permanently deleted!')
-        cy.get('.container').should('contain.text', 'You can create new account to take advantage of member privileges to enhance your online shopping experience with us.')
-        cy.get('[data-qa="continue-button"]').click()
-    }
+  validarMensagemContaCadastradaComErro() {
+    cy.get(loc.mensagemContaErro)
+      .should('contain', 'Email Address already exist!');
+  }
+
+  validarMensagemContaExcluidaComSucesso() {
+    cy.get(loc.mensagemContaExcluida).should('contain.text', 'Account Deleted!');
+    cy.get(loc.mensagemContaExcluida).should('contain.text', 'Your account has been permanently deleted!');
+    cy.get(loc.mensagemContaExcluida).should('contain.text', 'You can create new account to take advantage of member privileges to enhance your online shopping experience with us.');
+    cy.get(loc.botaoContinuar).click();
+  }
 }
 
-export default new Cadastro()
+export default new Cadastro();

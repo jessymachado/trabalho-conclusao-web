@@ -1,0 +1,22 @@
+export const produtoLocators = {
+    secaoProdutos: '.features_items',
+    listaProdutos: '//div[@class="features_items"]//div[@class="product-image-wrapper"]',
+    primeiroProdutoDetalhes: 'a[href="/product_details/1"]',
+    detalhesProduto: '.product-details',
+    imagemProduto: '.view-product img',
+    informacoesProduto: '.product-information',
+    tituloProduto: 'h2',
+    categoriaProduto: 'p:contains("Category:")',
+    precoProduto: 'span span',
+    quantidadeProduto: 'input#quantity',
+    disponibilidadeProduto: 'b:contains("Availability:")',
+    estoqueProduto: 'p:contains("In Stock")',
+    condicaoProduto: 'b:contains("Condition:")',
+    condicaoValor: 'p:contains("New")',
+    marcaProduto: 'b:contains("Brand:")',
+    marcaValor: 'p:contains("Polo")',
+    inputPesquisa: '#search_product',
+    botaoPesquisar: '#submit_search',
+    produtoPesquisadoNome: 'p',
+    produtoPesquisadoPreco: 'h2'
+};

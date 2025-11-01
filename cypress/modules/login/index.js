@@ -1,36 +1,36 @@
-import { dadosUsuario } from "../../data/usuario.js"
-import userData from '../../fixtures/example.json'
+import { loginLocators as loc } from './locators.js';
+import { dadosUsuario } from '../../data/usuario.js';
+import userData from '../../fixtures/example.json';
 
 class Login {
-    preencherFormularioDeLogin(usuario, password) {
-        cy.get('[data-qa="login-email"]').type(usuario)
-        cy.get('[data-qa="login-password"]').type(password)
 
-        cy.get('[data-qa="login-button"]').click()
-    }
+  preencherFormularioDeLogin(usuario, password) {
+    cy.get(loc.inputEmailLogin).type(usuario);
+    cy.get(loc.inputSenhaLogin).type(password);
+    cy.get(loc.botaoLogin).click();
+  }
 
-    preencherFormularioDePreCadastro(emailNovoOuExistente) {
-        cy.get('[data-qa="signup-name"]').type(`${dadosUsuario.primNome} ${dadosUsuario.sobrenome}`)
-        cy.get('[data-qa="signup-email"]').type(`${emailNovoOuExistente}`)
+  preencherFormularioDePreCadastro(emailNovoOuExistente) {
+    cy.get(loc.inputNomePreCadastro).type(`${dadosUsuario.primNome} ${dadosUsuario.sobrenome}`);
+    cy.get(loc.inputEmailPreCadastro).type(emailNovoOuExistente);
+    cy.contains('button', 'Signup').click();
+  }
 
-        cy.contains('button', 'Signup').click()
-    }
+  validarMensagemLoginComSucesso() {
+    cy.get(loc.iconeUsuario).parent().should('contain', userData.name);
+    cy.get(loc.linkLogout).should('be.visible');
+    cy.contains('b', loc.nomeUsuario(userData));
+    cy.contains(loc.textoUsuarioLogado(userData)).should('be.visible');
+  }
 
-    validarMensagemLoginComSucesso() {
-        cy.get('i.fa-user').parent().should('contain', userData.name)
-        cy.get('a[href="/logout"]').should('be.visible')
-        cy.contains('b', userData.name)
-        cy.contains(`Logged in as ${userData.name}`).should('be.visible')
-    }
+  validarMensagemLoginComErro() {
+    cy.get(loc.mensagemErroLogin).should('contain', 'Your email or password is incorrect!');
+  }
 
-    validarMensagemLoginComErro() {
-        cy.get('.login-form > form > p').should('contain', 'Your email or password is incorrect!')
-    }
-
-    validarLogoutComSucesso() {
-        cy.get('a[href="/logout"]').should('not.exist')
-        cy.get('a[href="/login"]').should('contain', 'Signup / Login')
-    }
+  validarLogoutComSucesso() {
+    cy.get(loc.linkLogout).should('not.exist');
+    cy.get(loc.linkLogin).should('contain', 'Signup / Login');
+  }
 }
 
-export default new Login()
+export default new Login();

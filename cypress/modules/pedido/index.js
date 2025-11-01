@@ -1,16 +1,17 @@
-import { dadosCartao } from "../../data/pagamento.js"
+import { pedidoLocators as loc } from './locators.js';
+import { dadosCartao } from "../../data/pagamento.js";
 
 export function preencherInformacoesPagamento() {
-    cy.get('[data-qa="name-on-card"]').type(dadosCartao.nomeCartao)
-    cy.get('[data-qa="card-number"]').type(dadosCartao.numero)
-    cy.get('[data-qa="cvc"]').type(dadosCartao.cvc)
-    cy.get('[data-qa="expiry-month"]').type(dadosCartao.mesValid)
-    cy.get('[data-qa="expiry-year"]').type(dadosCartao.anoValid)
+  cy.get(loc.inputNomeCartao).type(dadosCartao.nomeCartao);
+  cy.get(loc.inputNumeroCartao).type(dadosCartao.numero);
+  cy.get(loc.inputCVC).type(dadosCartao.cvc);
+  cy.get(loc.inputMesValidade).type(dadosCartao.mesValid);
+  cy.get(loc.inputAnoValidade).type(dadosCartao.anoValid);
 
-    cy.get('[data-qa="pay-button"]').click()
+  cy.get(loc.botaoPagar).click();
 }
 
 export function validarMensagemPedidoComSucesso() {
-    cy.contains('Congratulations! Your order has been confirmed!').should('be.visible').click()
-    cy.contains('Order Placed!').should('be.visible').click()
+  cy.contains(loc.mensagemPedidoConfirmado).should('be.visible').click();
+  cy.contains(loc.mensagemPedidoRealizado).should('be.visible').click();
 }
